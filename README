@@ -76,6 +76,19 @@ The tuning plugin can estimate the local and global tuning of piece. The same tu
 * Tuning: returns a single label (at time 0 seconds) containing an estimate of the concert pitch in Hz.
 * Local Tuning: returns a tuning estimate at every analysis frame, an average of the (recent) previous frame-wise estimates of the concert pitch in Hz.
 
+### Building on macOS (Apple Silicon) ###
+
+Needs the Xcode command-line tools and Boost headers from Homebrew. Build the static Vamp plugin SDK next to this directory, then the plugin:
+
+    brew install boost
+    git clone https://github.com/vamp-plugins/vamp-plugin-sdk
+    make -C vamp-plugin-sdk -f otherbuilds/Makefile.osx sdkstatic ARCHFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++"
+    make -C nnls-chroma -f Makefile.osx
+
+This produces `nnls-chroma.dylib`. Put it and `nnls-chroma.cat` in a directory on `VAMP_PATH`. From Python, `pip install vamp` and call `vamp.collect(audio, sr, "nnls-chroma:chordino", output="simplechord")`.
+
+`VAMP_SDK_DIR` and `BOOST_ROOT` can be overridden on the `make` command line.
+
 ### References and Credits ###
 
 If you make use of this software for any public or commercial purpose,
